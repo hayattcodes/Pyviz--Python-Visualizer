@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PyViz — Python Code Visualizer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <div class="nav-logo">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect width="28" height="28" rx="8" fill="#1B3A6B"/>
+          <path d="M7 8h8a3 3 0 0 1 0 6H7V8z" fill="#F5E86B"/>
+          <path d="M7 14h10a3 3 0 0 1 0 6H7v-6z" fill="#F5E86B" opacity="0.6"/>
+        </svg>
+      </div>
+      <span class="nav-title">PyViz</span>
+      <span class="nav-badge">Visualizer</span>
+    </div>
+    <div class="nav-links">
+      <a href="#" class="nav-link active">Code Visualizer</a>
+      <a href="#examples" class="nav-link">Examples</a>
+      <a href="#about" class="nav-link">About</a>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-outline" id="btn-docs">Documentation</button>
+    </div>
+  </nav>
+
+  <!-- ===== HERO STRIP ===== -->
+  <div class="hero-strip">
+    <div class="hero-text">
+      <span class="hero-eyebrow">🐍 Step-by-step Python Execution</span>
+      <h1 class="hero-heading">Visualize your Python code <em>live</em></h1>
+      <p class="hero-sub">Watch variables change, functions call, and control flow unfold — one step at a time.</p>
+    </div>
+    <div class="hero-chips">
+      <div class="chip chip-blue"><span class="chip-dot"></span>Line-by-line tracing</div>
+      <div class="chip chip-yellow"><span class="chip-dot"></span>Call stack view</div>
+      <div class="chip chip-blue"><span class="chip-dot"></span>Variable inspector</div>
+      <div class="chip chip-yellow"><span class="chip-dot"></span>Live output</div>
+    </div>
+  </div>
+
+  <!-- ===== EXAMPLE PILLS ===== -->
+  <div class="examples-bar" id="examples">
+    <span class="examples-label">Try an example:</span>
+    <div class="example-pills">
+      <button class="pill" data-example="fibonacci">Fibonacci</button>
+      <button class="pill" data-example="bubble_sort">Bubble Sort</button>
+      <button class="pill" data-example="recursion">Recursion</button>
+      <button class="pill" data-example="list_comp">List Comprehension</button>
+      <button class="pill" data-example="closures">Closures</button>
+      <button class="pill" data-example="classes">Classes</button>
+    </div>
+  </div>
+
+  <!-- ===== MAIN WORKSPACE ===== -->
+  <main class="workspace">
+
+    <!-- LEFT: Code Editor Panel -->
+    <section class="panel panel-editor">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="panel-icon">{ }</span>
+          <span>Code Editor</span>
+        </div>
+        <div class="panel-actions">
+          <button class="icon-btn" id="btn-clear" title="Clear code">✕</button>
+          <button class="icon-btn" id="btn-copy" title="Copy code">⎘</button>
+        </div>
+      </div>
+      <div class="editor-wrap">
+        <div class="line-numbers" id="line-numbers"></div>
+        <textarea
+          id="code-editor"
+          class="code-editor"
+          spellcheck="false"
+          autocomplete="off"
+          autocorrect="off"
+          placeholder="# Write your Python code here..."
+        >x = 5
+y = 10
+z = x + y
+print(z)
+
+def greet(name):
+    message = "Hello, " + name + "!"
+    return message
+
+result = greet("PyViz")
+print(result)</textarea>
+      </div>
+      <div class="editor-footer">
+        <span class="editor-info" id="editor-info">11 lines · Python 3</span>
+        <button class="btn-run" id="btn-run">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><polygon points="4,2 14,8 4,14" fill="currentColor"/></svg>
+          Visualize
+        </button>
+      </div>
+    </section>
+
+    <!-- RIGHT: Visualization Panel -->
+    <section class="panel panel-viz">
+
+      <!-- Playback Controls -->
+      <div class="playback-bar">
+        <div class="playback-info">
+          <span class="playback-step" id="step-counter">Step 0 / 0</span>
+          <span class="playback-event" id="step-event">Ready</span>
+        </div>
+        <div class="playback-controls">
+          <button class="ctrl-btn" id="btn-first" title="Go to start" disabled>⏮</button>
+          <button class="ctrl-btn" id="btn-prev"  title="Previous step" disabled>◀</button>
+          <button class="ctrl-btn ctrl-play" id="btn-play" title="Play / Pause" disabled>▶</button>
+          <button class="ctrl-btn" id="btn-next"  title="Next step" disabled>▶▶</button>
+          <button class="ctrl-btn" id="btn-last"  title="Go to end" disabled>⏭</button>
+        </div>
+        <div class="speed-control">
+          <label class="speed-label">Speed</label>
+          <input type="range" id="speed-slider" min="1" max="5" value="3" class="speed-slider" />
+          <span class="speed-val" id="speed-val">3×</span>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+
+      <!-- Step Description -->
+      <div class="step-description" id="step-desc">
+        Press <strong>Visualize</strong> to start tracing your code.
+      </div>
+
+      <!-- Three Viz Cards -->
+      <div class="viz-grid">
+
+        <!-- Call Stack -->
+        <div class="viz-card card-stack">
+          <div class="viz-card-header">
+            <span class="viz-card-icon">⊞</span>
+            <span class="viz-card-title">Call Stack</span>
+          </div>
+          <div class="viz-card-body" id="call-stack">
+            <div class="empty-state">No active calls</div>
+          </div>
+        </div>
+
+        <!-- Variables -->
+        <div class="viz-card card-vars">
+          <div class="viz-card-header">
+            <span class="viz-card-icon">≡</span>
+            <span class="viz-card-title">Variables</span>
+          </div>
+          <div class="viz-card-body" id="variables-panel">
+            <div class="empty-state">No variables yet</div>
+          </div>
+        </div>
+
+        <!-- Output -->
+        <div class="viz-card card-output">
+          <div class="viz-card-header">
+            <span class="viz-card-icon">▷</span>
+            <span class="viz-card-title">Output</span>
+          </div>
+          <div class="viz-card-body output-body" id="output-panel">
+            <div class="empty-state">No output yet</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Code Highlight Mirror -->
+      <div class="code-mirror-wrap">
+        <div class="code-mirror-header">
+          <span class="code-mirror-title">Current Execution</span>
+          <span class="code-mirror-line" id="current-line-label">—</span>
+        </div>
+        <div class="code-mirror" id="code-mirror">
+          <div class="empty-state">Run your code to see execution highlights</div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- ===== ABOUT SECTION ===== -->
+  <section class="about-section" id="about">
+    <div class="about-inner">
+      <div class="about-left">
+        <span class="about-eyebrow">What is PyViz?</span>
+        <h2 class="about-heading">Built for learners who want to <em>see</em> Python</h2>
+        <p class="about-body">PyViz traces your Python code execution step-by-step, showing you exactly what happens inside functions, loops, and conditionals. No more guessing — just clarity.</p>
+      </div>
+      <div class="about-cards">
+        <div class="about-card">
+          <div class="about-card-icon">🔍</div>
+          <h3>Deep Tracing</h3>
+          <p>Track every line, function call, and return value with our built-in sys.settrace engine.</p>
+        </div>
+        <div class="about-card">
+          <div class="about-card-icon">📦</div>
+          <h3>Variable Inspector</h3>
+          <p>See live variable states at every step, with type annotations and value changes highlighted.</p>
+        </div>
+        <div class="about-card">
+          <div class="about-card-icon">🧩</div>
+          <h3>Call Stack View</h3>
+          <p>Visualize nested function calls and understand how the stack grows and shrinks.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-brand">
+      <span class="footer-logo">PyViz</span>
+      <span class="footer-tagline">Python Code Visualizer</span>
+    </div>
+    <p class="footer-copy">Built with Flask · Python 3 · Powered by sys.settrace</p>
+  </footer>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loader-card">
+      <div class="spinner"></div>
+      <p>Tracing execution...</p>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
