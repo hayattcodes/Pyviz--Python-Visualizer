@@ -190,7 +190,40 @@ print(result)</textarea>
 
     </section>
   </main>
-
+<!-- ===== FLOWCHART SECTION ===== -->
+<section class="flowchart-section" id="flowchart-section" style="display:none">
+  <div class="flowchart-header">
+    <div class="flowchart-title-row">
+      <div class="flowchart-title">
+        <span class="flowchart-icon">🔀</span>
+        <span>Code Flowchart</span>
+      </div>
+      <div class="flowchart-tabs">
+        <button class="ftab ftab--active" id="ftab-execution" onclick="switchFlowTab('execution')">
+          ▶ Execution Flow
+        </button>
+        <button class="ftab" id="ftab-static" onclick="switchFlowTab('static')">
+          🏗 Code Structure
+        </button>
+      </div>
+      <div class="flowchart-legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#1A8A4A"></span>Start/End</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#1B3A6B"></span>Execute</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#7B4F00"></span>Condition</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#0C4A6E"></span>Loop</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#1E1B4B"></span>Function</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#7B0000"></span>Error</span>
+      </div>
+    </div>
+  </div>
+  <div class="flowchart-body" id="flowchart-body">
+    <div class="flowchart-placeholder">
+      <div class="fc-ph-icon">🔀</div>
+      <p class="fc-ph-title">No flowchart yet</p>
+      <p class="fc-ph-sub">Click Visualize to generate the flowchart</p>
+    </div>
+  </div>
+</section>
   <!-- ===== ABOUT SECTION ===== -->
   <section class="about-section" id="about">
     <div class="about-inner">

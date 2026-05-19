@@ -1,5 +1,4 @@
 import sys
-import copy
 import io
 
 class CodeTracer:
@@ -8,23 +7,46 @@ class CodeTracer:
         self.output_lines = []
 
     def trace(self, frame, event, arg):
+        if frame.f_code.co_filename != "<student_code>":
+            return self.trace
+
         if event == "line":
             clean_vars = {}
-            # manually copy each variable instead of deepcopying the whole frame
             for key, value in frame.f_locals.items():
                 if key.startswith("__"):
                     continue
                 try:
-                    if isinstance(value, (int, float, str, bool, type(None))):
+                    if isinstance(value, bool):
                         clean_vars[key] = value
+                    elif isinstance(value, (int, float, str)):
+                        clean_vars[key] = value
+                    elif isinstance(value, type(None)):
+                        clean_vars[key] = None
                     elif isinstance(value, list):
-                        clean_vars[key] = list(value)
+                        safe = []
+                        for item in value:
+                            if isinstance(item, (int, float, str, bool, type(None))):
+                                safe.append(item)
+                            else:
+                                safe.append(repr(item))
+                        clean_vars[key] = safe
                     elif isinstance(value, dict):
-                        clean_vars[key] = dict(value)
+                        safe = {}
+                        for k, v in value.items():
+                            if isinstance(v, (int, float, str, bool, type(None))):
+                                safe[k] = v
+                            else:
+                                safe[k] = repr(v)
+                        clean_vars[key] = safe
                     elif isinstance(value, tuple):
-                        clean_vars[key] = tuple(value)
+                        clean_vars[key] = tuple(
+                            i if isinstance(i, (int, float, str, bool, type(None)))
+                            else repr(i) for i in value
+                        )
+                    else:
+                        clean_vars[key] = repr(value)
                 except Exception:
-                    pass  # skip anything we can't safely copy
+                    pass
 
             self.steps.append({
                 "line":      frame.f_lineno,
@@ -42,15 +64,10 @@ class CodeTracer:
                     try:
                         if isinstance(value, (int, float, str, bool, type(None))):
                             clean_vars[key] = value
-                        elif isinstance(value, list):
-                            clean_vars[key] = list(value)
-                        elif isinstance(value, dict):
-                            clean_vars[key] = dict(value)
-                        elif isinstance(value, tuple):
-                            clean_vars[key] = tuple(value)
+                        else:
+                            clean_vars[key] = repr(value)
                     except Exception:
                         pass
-
                 self.steps.append({
                     "line":         frame.f_lineno,
                     "variables":    clean_vars,
@@ -58,6 +75,16 @@ class CodeTracer:
                     "return_value": repr(arg),
                     "function":     frame.f_code.co_name
                 })
+
+        elif event == "exception":
+            exc_type, exc_value, _ = arg
+            self.steps.append({
+                "line":      frame.f_lineno,
+                "variables": {},
+                "event":     "error",
+                "error":     f"{exc_type.__name__}: {exc_value}",
+                "function":  frame.f_code.co_name
+            })
 
         return self.trace
 
@@ -73,7 +100,7 @@ class CodeTracer:
 
         try:
             compiled = compile(code, "<student_code>", "exec")
-            exec(compiled)
+            exec(compiled, {})
 
         except SyntaxError as e:
             self.steps.append({

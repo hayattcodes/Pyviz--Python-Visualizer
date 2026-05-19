@@ -1050,3 +1050,128 @@ body {
   .viz-grid { grid-template-columns: 1fr; }
   .viz-card { border-right: none; border-bottom: 1px solid var(--border); }
 }
+/* ===== FLOWCHART SECTION ===== */
+.flowchart-section {
+  background: var(--surface);
+  border-top: 2px solid var(--border-strong);
+  margin-top: 0;
+}
+
+.flowchart-header {
+  background: var(--berry);
+  padding: 0.75rem 1.5rem;
+  border-bottom: 2px solid var(--yellow);
+}
+
+.flowchart-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.flowchart-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.flowchart-icon { font-size: 1.1rem; }
+
+.flowchart-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.ftab {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.7);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.ftab:hover {
+  background: rgba(245,232,107,0.15);
+  color: var(--yellow);
+  border-color: rgba(245,232,107,0.4);
+}
+
+.ftab--active {
+  background: var(--yellow);
+  color: var(--berry);
+  border-color: var(--yellow);
+}
+
+.flowchart-legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.6);
+  font-weight: 500;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.flowchart-body {
+  padding: 24px;
+  overflow-x: auto;
+  min-height: 300px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: var(--surface-alt);
+}
+
+.flowchart-body svg {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.flowchart-placeholder {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--ink-faint);
+}
+
+.fc-ph-icon {
+  font-size: 42px;
+  margin-bottom: 12px;
+}
+
+.fc-ph-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  margin-bottom: 6px;
+}
+
+.fc-ph-sub {
+  font-size: 13px;
+  color: var(--ink-faint);
+}
